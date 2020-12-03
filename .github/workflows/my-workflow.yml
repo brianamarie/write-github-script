@@ -8,7 +8,8 @@ jobs:
   comment:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/github-script@0.8.0
+    - name: Comment on new issue
+      uses: actions/github-script@0.8.0
       with:
         github-token: ${{secrets.GITHUB_TOKEN}}
         script: |
@@ -18,6 +19,13 @@ jobs:
             repo: context.repo.repo,
             body: "🎉 You've created this issue comment using GitHub Script!!!"
             })
+
+    - name: Add issue to project board
+      if: contains(github.event.issue.labels.*.name, 'bug')
+      uses: actions/github-script@0.8.0
+      with:
+        github-token: ${{secrets.GITHUB_TOKEN}}
+        script: |
             github.projects.createCard({
             column_id: 11938140,
             content_id: context.payload.issue.id,
